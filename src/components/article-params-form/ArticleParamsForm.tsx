@@ -10,16 +10,58 @@ import { Select } from 'src/ui/select';
 import {
 	backgroundColors,
 	contentWidthArr,
+	defaultArticleState,
 	fontColors,
 	fontFamilyOptions,
 	fontSizeOptions,
+	OptionType,
 } from 'src/constants/articleProps';
 import { RadioGroup } from 'src/ui/radio-group';
 import { Separator } from 'src/ui/separator';
 
 export const ArticleParamsForm = () => {
 	const asideRef = useRef(null);
+
 	const [isFormOpen, setIsFormOpen] = useState(false);
+
+	const [formState, setFormState] = useState(defaultArticleState);
+
+	const [fontFamilyValue, setFontFamilyValue] = useState(
+		defaultArticleState.fontFamilyOption
+	);
+	const [fontSizeValue, setFontSizeValue] = useState(
+		defaultArticleState.fontSizeOption
+	);
+	const [fontColorValue, setFontColorValue] = useState(
+		defaultArticleState.fontColor
+	);
+	const [bgColorValue, setbgColorValue] = useState(
+		defaultArticleState.backgroundColor
+	);
+	const [contentWidthValue, setContentWidthValue] = useState(
+		defaultArticleState.contentWidth
+	);
+
+	const selectFontFamily = (value: OptionType) => {
+		setFontFamilyValue({ ...fontFamilyValue, ...value });
+		setFormState({ ...formState, fontFamilyOption: value });
+	};
+	const selectFontSize = (value: OptionType) => {
+		setFontSizeValue({ ...fontSizeOptions, ...value });
+		setFormState({ ...formState, fontSizeOption: value });
+	};
+	const selectFontColor = (value: OptionType) => {
+		setFontColorValue({ ...fontColorValue, ...value });
+		setFormState({ ...formState, fontColor: value });
+	};
+	const selectBgColor = (value: OptionType) => {
+		setbgColorValue({ ...bgColorValue, ...value });
+		setFormState({ ...formState, backgroundColor: value });
+	};
+	const selectContentWidth = (value: OptionType) => {
+		setContentWidthValue({ ...contentWidthValue, ...value });
+		setFormState({ ...formState, contentWidth: value });
+	};
 
 	const toggleFormOpen = () => {
 		setIsFormOpen(!isFormOpen);
@@ -45,20 +87,23 @@ export const ArticleParamsForm = () => {
 					<Select
 						options={fontFamilyOptions}
 						title='шрифт'
-						selected={fontFamilyOptions[0]}
+						selected={fontFamilyValue}
+						onChange={selectFontFamily}
 					/>
 
 					<RadioGroup
 						title='рАЗМЕР шрифта'
 						options={fontSizeOptions}
-						selected={fontSizeOptions[0]}
+						selected={fontSizeValue}
 						name='font-size-group'
+						onChange={selectFontSize}
 					/>
 
 					<Select
 						options={fontColors}
 						title='Цвет шрифта'
-						selected={fontColors[0]}
+						selected={fontColorValue}
+						onChange={selectFontColor}
 					/>
 
 					<Separator />
@@ -66,13 +111,15 @@ export const ArticleParamsForm = () => {
 					<Select
 						options={backgroundColors}
 						title='Цвет фона'
-						selected={backgroundColors[0]}
+						selected={bgColorValue}
+						onChange={selectBgColor}
 					/>
 
 					<Select
 						options={contentWidthArr}
 						title='Ширина контента'
-						selected={contentWidthArr[0]}
+						selected={contentWidthValue}
+						onChange={selectContentWidth}
 					/>
 
 					<div className={styles.bottomContainer}>
