@@ -2,7 +2,7 @@ import { ArrowButton } from 'src/ui/arrow-button';
 import { Button } from 'src/ui/button';
 
 import styles from './ArticleParamsForm.module.scss';
-import { useRef, useState } from 'react';
+import { FormEvent, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { useOutsideClickClose } from 'src/ui/select/hooks/useOutsideClickClose';
 import { Text } from 'src/ui/text';
@@ -10,7 +10,6 @@ import { Select } from 'src/ui/select';
 import {
 	backgroundColors,
 	contentWidthArr,
-	defaultArticleState,
 	fontColors,
 	fontFamilyOptions,
 	fontSizeOptions,
@@ -18,28 +17,37 @@ import {
 } from 'src/constants/articleProps';
 import { RadioGroup } from 'src/ui/radio-group';
 import { Separator } from 'src/ui/separator';
+import { TPageStyle } from 'src/index';
 
-export const ArticleParamsForm = () => {
+type TForm = {
+	getChangedStyle: React.Dispatch<React.SetStateAction<TPageStyle>>;
+	defaultPageStyle: TPageStyle;
+};
+
+export const ArticleParamsForm = ({
+	getChangedStyle,
+	defaultPageStyle,
+}: TForm) => {
 	const asideRef = useRef(null);
 
 	const [isFormOpen, setIsFormOpen] = useState(false);
 
-	const [formState, setFormState] = useState(defaultArticleState);
+	const [formState, setFormState] = useState(defaultPageStyle);
 
 	const [fontFamilyValue, setFontFamilyValue] = useState(
-		defaultArticleState.fontFamilyOption
+		defaultPageStyle.fontFamilyOption
 	);
 	const [fontSizeValue, setFontSizeValue] = useState(
-		defaultArticleState.fontSizeOption
+		defaultPageStyle.fontSizeOption
 	);
 	const [fontColorValue, setFontColorValue] = useState(
-		defaultArticleState.fontColor
+		defaultPageStyle.fontColor
 	);
-	const [bgColorValue, setbgColorValue] = useState(
-		defaultArticleState.backgroundColor
+	const [bgColorValue, setBgcolorValue] = useState(
+		defaultPageStyle.backgroundColor
 	);
 	const [contentWidthValue, setContentWidthValue] = useState(
-		defaultArticleState.contentWidth
+		defaultPageStyle.contentWidth
 	);
 
 	const selectFontFamily = (value: OptionType) => {
@@ -55,7 +63,7 @@ export const ArticleParamsForm = () => {
 		setFormState({ ...formState, fontColor: value });
 	};
 	const selectBgColor = (value: OptionType) => {
-		setbgColorValue({ ...bgColorValue, ...value });
+		setBgcolorValue({ ...bgColorValue, ...value });
 		setFormState({ ...formState, backgroundColor: value });
 	};
 	const selectContentWidth = (value: OptionType) => {
@@ -73,13 +81,35 @@ export const ArticleParamsForm = () => {
 		onChange: setIsFormOpen,
 	});
 
+	const applyChangedStyles = (e: FormEvent) => {
+		e.preventDefault();
+		getChangedStyle(formState);
+	};
+
+	const resetChangedStyles = () => {
+		setFontFamilyValue(defaultPageStyle.fontFamilyOption);
+		setFontSizeValue(defaultPageStyle.fontSizeOption);
+		setFontColorValue(defaultPageStyle.fontColor);
+		setBgcolorValue(defaultPageStyle.backgroundColor);
+		setContentWidthValue(defaultPageStyle.contentWidth);
+
+		setFormState((prevState) => ({ ...prevState, ...defaultPageStyle }));
+		getChangedStyle((prevState) => ({
+			...prevState,
+			...defaultPageStyle,
+		}));
+	};
+
 	return (
 		<>
 			<ArrowButton isOpen={isFormOpen} onClick={toggleFormOpen} />
 			<aside
 				ref={asideRef}
 				className={clsx(styles.container, isFormOpen && styles.container_open)}>
-				<form className={styles.form}>
+				<form
+					className={styles.form}
+					onSubmit={applyChangedStyles}
+					onReset={resetChangedStyles}>
 					<Text weight={800} size={31} uppercase>
 						Задайте параметры
 					</Text>
