@@ -17,7 +17,7 @@ import {
 } from 'src/constants/articleProps';
 import { RadioGroup } from 'src/ui/radio-group';
 import { Separator } from 'src/ui/separator';
-import { TPageStyle } from 'src/index';
+import { TPageStyle } from 'src/app/App';
 
 type TForm = {
 	getChangedStyle: React.Dispatch<React.SetStateAction<TPageStyle>>;
